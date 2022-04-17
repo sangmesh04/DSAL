@@ -25,7 +25,7 @@ using namespace std;
 struct node{
 	long long int tel;
 	string name;
-	int nextIndex;
+	//int nextIndex;
 	struct node * next;
 };
 
@@ -35,10 +35,10 @@ class HashTable{
 public:
 
 	int divisionMethod(long long int a);
-	node * InsertByChainingTel();
+	//node * InsertByChainingTel();
 	void insertByWithOutReplacement();
 	void insertByWithReplacement();
-	void searchForTelByWithOutReplacement();
+	void searchForTel();
 	void displayDiary();
 };
 
@@ -88,13 +88,51 @@ void HashTable::insertByWithReplacement(){
 	x = new node;
 	x->name = s;
 	x->tel = t;
-	x->nextIndex = -1;
 	if(telArr[i] == NULL){
 		flag = 0;
 		telArr[i] = x;
 	}else{
-		int l;
-		l = telArr[i]->nextIndex;
+	    long long int tempTel;
+	    tempTel = telArr[i]->tel;
+		 if(divisionMethod(tempTel) == i){
+            for(int j=i;j<N;j++){
+			if(telArr[j] == NULL){
+				telArr[j] = x;
+				flag = 0;
+				break;
+			}
+		}
+		if(flag){
+			for(int k =0; k< i;k++){
+				if(telArr[k] == NULL){
+						telArr[k] = x;
+						flag = 0;
+						break;
+				}
+			}
+		}
+		 }else{
+
+		 node * v;
+		 v = telArr[i];
+         telArr[i] = x;
+		  for(int j=i+1;j<N;j++){
+			if(telArr[j] == NULL){
+				telArr[j] = v;
+				flag = 0;
+				break;
+			}
+		}
+		if(flag){
+			for(int k =0; k< i;k++){
+				if(telArr[k] == NULL){
+						telArr[k] = v;
+						flag = 0;
+						break;
+				}
+			}
+		}
+		 }
 	}
 }
 
@@ -140,48 +178,55 @@ void HashTable::insertByWithOutReplacement(){
 	}
 }
 
-void HashTable::searchForTelByWithOutReplacement(){
-	int count = 0;
+void HashTable::searchForTel(){
+	int cnt = 0;
 	long long int tel;
 	cout<<"Enter telephone to be searched: "<<endl;
 	cin>>tel;
 	int flag = 1;
 	int i = divisionMethod(tel);
-	if(telArr[i]->tel == tel){
-		flag = 0;
-		cout<<"Telephone found!"<<endl;
-		cout<<i<<". "<<telArr[i]->name<<"   |   "<<telArr[i]->tel<<endl;
-		count+=1;
-		cout<<"The number of comparisons: "<<count<<endl;
-	}else{
-		cout<<"test";
+	if(telArr[i] != NULL){
+        if(telArr[i]->tel == tel){
+            flag = 0;
+            cout<<"Telephone found!"<<endl;
+            cout<<i<<". "<<telArr[i]->name<<"   |   "<<telArr[i]->tel<<endl;
+            cnt+=1;
+            cout<<"The number of comparisons: "<<cnt<<endl;
+        }else{
 		for(int j=i;j<N;j++){
-			count+=1;
-					if(telArr[j]->tel == tel){
-						flag = 0;
-						cout<<"Telephone found!"<<endl;
-						cout<<j<<". "<<telArr[j]->name<<"   |   "<<telArr[j]->tel<<endl;
-						cout<<"The number of comparisons: "<<count<<endl;
-						break;
-					}
+			cnt+=1;
+                    if(telArr[j] != NULL){
+                        if(telArr[j]->tel == tel){
+                            flag = 0;
+                            cout<<"Telephone found!"<<endl;
+                            cout<<j<<". "<<telArr[j]->name<<"   |   "<<telArr[j]->tel<<endl;
+                            cout<<"The number of comparisons: "<<cnt<<endl;
+                            break;
+                        }
+                    }
 				}
 				if(flag){
 					for(int k =0; k< i;k++){
-						count+=1;
-						if(telArr[k]->tel == tel){
-							flag = 0;
-							cout<<"Telephone found!"<<endl;
-							cout<<k<<". "<<telArr[k]->name<<"   |   "<<telArr[k]->tel<<endl;
-							cout<<"The number of comparisons: "<<count<<endl;
-							break;
+						cnt+=1;
+						if(telArr[k] != NULL){
+                            if(telArr[k]->tel == tel){
+                                flag = 0;
+                                cout<<"Telephone found!"<<endl;
+                                cout<<k<<". "<<telArr[k]->name<<"   |   "<<telArr[k]->tel<<endl;
+                                cout<<"The number of comparisons: "<<cnt<<endl;
+                                break;
+                            }
 						}
 					}
 				}
 
 	}
+	}else{
+	cnt+=1;
+	}
 	if(flag){
 		cout<<"The telephone is not present in diary!"<<endl;
-		cout<<"Count for comparisons are: "<<count<<endl;
+		cout<<"Count for comparisons are: "<<cnt<<endl;
 	}
 }
 
@@ -191,16 +236,9 @@ void HashTable::displayDiary(){
 	for(int j =0;j<N;j++){
 		temp = telArr[j];
 		if(temp != NULL){
-			if(temp->next == NULL){
 			cout<<j<<". |"<<temp->name<<"     | "<<temp->tel<<endl;
-			}else{
-				node * y = temp;
-				while(y != NULL){
-					cout<<j<<". |"<<y->name<<"     | "<<y->tel<<endl;
-					y = y->next;
-				}
 			}
-		}else{
+		else{
 			cout<<j<<". |"<<"Person"<<"     | "<<0<<endl;
 		}
 	}
@@ -215,7 +253,7 @@ int main() {
 		while (true && flag){
 		        cout << "\n<-----MENU----->" << endl;
 		        cout << "1. Insert telephone by linear probing without replacement "<< endl;
-		        cout << "2. Insert telephone by chaining method " << endl;
+		        cout << "2. Insert telephone by linear probing with replacement " << endl;
 		        cout << "3. Display " << endl;
 		        cout << "4. Search Telephone" << endl;
 		        cout << "5. Exit" << endl;
@@ -233,7 +271,10 @@ int main() {
 		        }
 		        case 2:
 		        {
-		        	h.InsertByChainingTel();
+		            cout<<"How many contacts you want to add? "<<endl;
+		            cin>>num;
+		            for(int i=0;i<num;i++)
+                        h.insertByWithReplacement();
 		            break;
 		        }
 		        case 3:
@@ -243,7 +284,7 @@ int main() {
 		        }
 		        case 4:
 		        {
-		        	h.searchForTelByWithOutReplacement();
+		        	h.searchForTel();
 		        	break;
 		        }
 		        case 5:
