@@ -11,7 +11,7 @@
 /*
 
 Consider telephone book database of N clients. Make use of a hash table
-implementation to quickly look up client‘s telephone number. Make use of two
+implementation to quickly look up client's telephone number. Make use of two
 collision handling techniques and compare them using number of comparisons
 required to find a set of telephone numbers (use linear probing with replacement and
 without replacement)
@@ -26,7 +26,7 @@ struct node{
 	long long int tel;
 	string name;
 	//int nextIndex;
-	struct node * next;
+	//struct node * next;
 };
 
 class HashTable{
