@@ -60,8 +60,7 @@ void prims::primsAlgo() {
     int cost = 0;
     for (i = 0; i < nodes; i++)
         selected[i] = zero;
-
-    selected[0] = one;        //starting vertex is always node-0
+        selected[0] = one;        //starting vertex is always node-0
 
     while (ne < nodes - 1) {
         min = infi;

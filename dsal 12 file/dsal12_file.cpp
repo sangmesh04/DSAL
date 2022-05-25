@@ -15,16 +15,18 @@ class student
 public:
 	char name[10];
 	int roll;
+	int division;
+	char address[20];
 	void getdata()
 	{
-		cout << "\n Enter the roll no and name:";
-		cin >> roll >> name;
+		cout << "\n Enter the roll no, name, division and address: ";
+		cin >> roll >> name >>division >> address;
 	}
 
 	void putdata()
 	{
-		cout << "\n The roll no and name:";
-		cout << roll << "    " << name;
+		cout << "\nRoll no, Name, Division, Address: ";
+		cout << roll << "    " << name<<"    "<<division<<"    "<<address;
 	}
 };
 
@@ -77,7 +79,7 @@ public:
 	{
 		student s;
 		int flag = 0;
-		cout << "\n Enter roll to be searched:";
+		cout << "\n Enter roll to be searched: ";
 		int r;
 		cin >> r;
 		fp.open("stu.txt", ios::in);
@@ -132,7 +134,7 @@ int main()
 		cout << "\n<---- MAIN MENU ---->"
 			 << endl;
 		cout << "\n 1 Create \n 2 Display \n 3 Search \n 4 Append \n 5 Delete \n 6 Exit";
-		cout << "\n Enter choice:";
+		cout << "\n Enter choice: ";
 		cin >> choice;
 		switch (choice)
 		{
@@ -152,8 +154,7 @@ int main()
 			f.delete1();
 			break;
 		case 6:
-			cout << "\nThank You!"
-				 << endl;
+			cout << "\nThank You!"<< endl;
 			choice = 0;
 			break;
 		}

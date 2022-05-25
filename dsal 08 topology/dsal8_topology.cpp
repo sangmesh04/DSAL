@@ -1,105 +1,223 @@
 /*
  Write a C++/Java program to implement topological sorting on graph using object
-oriented programming features Design necessary class. .( Use of graph)
+oriented programming features Design necessary class.( Use of graph)
 */
 
-#include<iostream>
-#include<stack>
-#include<list>
+#include <iostream>
+#include <string>
+#include <stack>
+#include <queue>
+
 using namespace std;
 
+string *numbers = NULL;
+
+class graph;
+
+class node
+{
+private:
+    int number;
+    node *next;
+
+public:
+    node(int number = 0)
+    {
+        this->number = number;
+        next = NULL;
+    }
+    friend class graph;
+};
 class graph
 {
-    int no_of_vertices;
-    list<int>* l1;
+private:
+    int vertices;
+    int edges;
+    node **arr;
 
-  public:
-    graph(int n)
-  {
-      no_of_vertices=n;
-      l1=new list<int>[n];
-  }
+public:
+    graph(int vertices = 0)
+    {
+        this->vertices = vertices;
+        edges = 0;
+        arr = new node *[vertices];
+        for (int i = 0; i < vertices; i++)
+        {
+            arr[i] = NULL;
+        }
+    }
+    void create()
+    {
+        for (int i = 0; i < vertices; i++)
+        {
+            int n;
+            cout << "\nEnter number of  directed edges connected from " << numbers[i] << " ( " << i << " ):";
+            cin >> n;
+            for (int j = 0; j < n; j++)
+            {
+                int x;
+                cout << "\nEnter index of incident node no." << j + 1 << ":";
+                cin >> x;
+                if (arr[i] == NULL)
+                {
+                    arr[i] = new node(x);
+                }
+                else
+                {
+                    node *q = new node(x);
+                    node *p = arr[i];
+                    node *follow = p;
+                    if (p == NULL)
+                    {
+                        p = q;
+                    }
+                    else
+                    {
+                        while (p != NULL)
+                        {
+                            follow = p;
+                            p = p->next;
+                        }
+                        follow->next = q;
+                    }
+                }
+            }
+        }
+    }
+    void display_adj_list()
+    {
+        cout << "\nAdjacency list:\n"
+             << endl;
+        for (int i = 0; i < vertices; i++)
+        {
 
-    /* push_back function is used to add new element at the end of the list container */
-    void add_edge(int x, int y)
-  {
-     l1[x].push_back(y);
-  }
-  void topological(int, int [], stack<int>& );
-    void topological_sort();
+            node *p = arr[i];
+            cout << "|" << i << "|-> ";
+            while (p != NULL)
+            {
+
+                cout << p->number << " -> ";
+
+                p = p->next;
+            }
+            cout << "NULL" << endl;
+            cout << endl;
+        }
+    }
+
+    void topo()
+    {
+        stack<int> topo_stack;
+        bool visited[vertices];
+        //initialize visited of  elements to false
+        for (int i = 0; i < vertices; i++)
+        {
+            visited[i] = false;
+        }
+        //call toposort for all vertices in adjacency list
+        for (int i = 0; i < vertices; i++)
+        {
+            topological_sort(i, topo_stack, visited);
+        }
+        //display stack contents from top to bottom
+        while (!topo_stack.empty())
+        {
+            int x=topo_stack.top();
+            cout<<x<<" ";
+            topo_stack.pop();
+        }
+
+
+    }
+    void topological_sort(int start, stack<int> &st, bool v[])
+    {
+        node *p = arr[start];
+        if (p == NULL)
+        {
+            if (v[start] == false)
+            {
+                st.push(start);
+                v[start] = true;
+            }
+            return;
+        }
+        else
+        {
+            while (p != NULL)
+            {
+                topological_sort(p->number, st, v);
+                p = p->next;
+            }
+            if (v[start] == false)
+            {
+                st.push(start);
+                v[start] = true;
+            }
+        }
+    }
 };
-
-void graph::topological(int vertex_no, int visited[], stack<int>& s)
-{
-  /* Marking vertex visited */
-    visited[vertex_no]=1;
-
-    /* we cannot iterate through list using normal integer. Hence we use iterator */
-    list<int>::iterator i;
-    for (i = l1[vertex_no].begin(); i != l1[vertex_no].end(); i++)
-  {
-        if (visited[*i]==0)
-    {
-            topological(*i,visited,s);
-    }
-  }
-
-    /* push current vertex on stack */
-    s.push(vertex_no);
-}
-
-void graph::topological_sort()
-{
-    stack<int> s;
-    int i,visited[no_of_vertices];
-
-  /* '0' means not visited and '1' means visited. here, we are marking all the vertices not-visited */
-    for (i=0; i<no_of_vertices;i++)
-  {
-    visited[i]=0;
-  }
-
-  /* calling topological for each vertex */
-    for (i=0; i<no_of_vertices;i++)
-  {
-    if (visited[i]==0)
-    {
-      topological(i,visited,s);
-    }
-  }
-
-  /* display stack content */
-    while(!s.empty())
-  {
-    int k=s.top();
-        cout<<k<<" ";
-        s.pop();
-    }
-}
 
 int main()
 {
-    int n, e;
-    cout<<"Enter no of vertices: ";
-    cin>>n;
-    graph p(n);  // 4: no of vertices
+    int k;
+    int v;
+    cout << "\nEnter no of nodes:";
+    cin >> v;
+    graph g(v);
 
-    cout<<"Enter no of edges: ";
-    cin>>e;
-    int s,d;
-    for(int i=0;i<n;i++){
-            cout<<"\nEnter edge "<<i+1<<" details-> "<<endl;
-        cout<<"Enter edge start point: ";
-        cin>>s;
-        cout<<"Enter destination point: ";
-        cin>>d;
-        p.add_edge(s,d);
-    }
+    int choice = 0;
+    do
+    {
+        cout << "\n\n----------------------------MENU------------------------------------\n"
+             << endl;
+        cout << "\n1.Create\n2.Display adjacency list\n3.Display Topological sorting\n4.Exit\n"
+             << endl;
+        cout << "\nEnter choice:";
+        cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            numbers = new string[v + 1];
 
-    /* This graph is shown in above figure */
+            for (int i = 0; i < v; i++)
+            {
+                string s;
+                cout << "\nEnter node name:";
+                cin >> s;
+                numbers[i] = s;
+            }
+            cout << endl;
+            cout << "\n-----------------Node indixes(starting from 0)----------------------\n"
+                 << endl;
+            for (int i = 0; i < v; i++)
+            {
+                cout << i << " " << numbers[i] << endl;
+            }
+            g.create();
+            break;
 
-    cout <<"\nTopological order of the vertices of the graph: ";
-    p.topological_sort();
+        case 2:
+            g.display_adj_list();
+            break;
+
+        case 3:
+            cout << "\nTopological sorting: " << endl;
+            g.topo();
+
+            break;
+
+        case 4:
+
+            cout << "\n\n-------------------------------Thank You-----------------------------\n\n"
+                 << endl;
+            choice = 0;
+            break;
+
+        default:
+            break;
+        }
+
+    } while (choice != 0);
 
     return 0;
 }
